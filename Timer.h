@@ -1,5 +1,21 @@
+/*
+    Copyright 2017 Jeffrey Thomas Piercy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Chimp Engine.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <chrono>
-//#include <deque>
 
 namespace frametimer
 {
@@ -93,92 +109,5 @@ const T Timer<T>::getFPSAverage() const
 {
     return numFramesActual / frameTimeTotal;
 }
-
-/*template<typename T = float>
-class Timer
-{
-private:
-    typedef std::chrono::steady_clock steady_clock;
-
-    typename std::result_of<decltype(&std::deque<T>::size)(std::deque<T>)>::type numFrames;
-    std::deque<T> frames;
-    steady_clock::time_point time;
-    T frameTimeTotal;
-
-public:
-    Timer(const int numFrames = 1);
-    bool setNumFrames(const int numFrames);
-    const int getNumFrames() const { return numFrames; }
-    bool setTime(const steady_clock::time_point& time = steady_clock::now());
-    const steady_clock::time_point getTime() const { return time; }
-    void ping();
-    const T getFrameTime() const { return frames.front(); }
-    const T getFrameTimeAverage() const;
-    const T getFPS() const;
-    const T getFPSAverage() const;
-};
-
-template<typename T>
-Timer<T>::Timer(const int numFrames)
-{
-    this->numFrames = 1;
-    setNumFrames(numFrames);
-    frameTimeTotal = 0;
-    time = steady_clock::now();
-}
-
-template<typename T>
-bool Timer<T>::setNumFrames(const int numFrames)
-{
-    if(numFrames < 1)
-        return false;
-
-    this->numFrames = numFrames;
-    for(int n = frames.size() - numFrames; n > 0; --n) // reduce frames to numFrames elements
-        frames.pop_back();
-    return true;
-}
-
-template<typename T>
-bool Timer<T>::setTime(const steady_clock::time_point& time)
-{
-    this->time = time;
-    return true;
-}
-
-template<typename T>
-void Timer<T>::ping()
-{
-    steady_clock::time_point timeOld = time;
-    time = steady_clock::now();
-    T frameTime = std::chrono::duration_cast<std::chrono::duration<T>>(time - timeOld).count();
-    frames.push_front(frameTime);
-    frameTimeTotal += frameTime;
-    if(frames.size() > numFrames)
-    {
-        frameTimeTotal -= frames.back();
-        frames.pop_back();
-    }
-}
-
-template<typename T>
-const T Timer<T>::getFrameTimeAverage() const
-{
-    if(frames.empty())
-        return 0;
-    return frameTimeTotal / frames.size();
-}
-
-template<typename T>
-const T Timer<T>::getFPS() const
-{
-    return 1 / getFrameTime();
-}
-
-template<typename T>
-const T Timer<T>::getFPSAverage() const
-{
-    return frames.size() / frameTimeTotal;
-}*/
 
 } // namespace frametimer
