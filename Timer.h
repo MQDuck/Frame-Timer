@@ -12,13 +12,14 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Chimp Engine.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef FRAMETIMER_TIMER_H
 #define FRAMETIMER_TIMER_H
 
 #include <chrono>
+#include <memory>
 
 namespace frametimer
 {
@@ -29,14 +30,13 @@ class Timer
 private:
     typedef std::chrono::steady_clock steady_clock;
 
-    T* frames;
+    std::unique_ptr<T[]> frames;
     int numFrames, numFramesActual, framesIndex;
     steady_clock::time_point time;
     T frameTimeTotal;
 
 public:
     Timer(const int numFrames = 1);
-    ~Timer() { delete[] frames; }
     bool setNumFrames(const int numFrames);
     const int getNumFrames() const { return numFrames; }
     bool setTime(const steady_clock::time_point& time = steady_clock::now());
@@ -49,11 +49,12 @@ public:
 };
 
 template<typename T>
-Timer<T>::Timer(const int numFrames)
+Timer<T>::Timer(const int numFrames) : frames()
 {
-	frames = nullptr;
-	if(setNumFrames(numFrames) == false)
-		this->numFrames = 1;
+    if(numFrames < 1)
+        throw std::runtime_error("Parameter numFrames to Timer<>::Timer(int numFrames) must be >= 1");
+    
+    setNumFrames(numFrames);
     time = steady_clock::now();
 }
 
@@ -64,9 +65,7 @@ bool Timer<T>::setNumFrames(const int numFrames)
         return false;
 
     this->numFrames = numFrames;
-    if(frames)
-        delete[] frames;
-    frames = new T[numFrames]();
+    frames.reset(new T[numFrames]);
     framesIndex = 0;
     frameTimeTotal = 0;
     numFramesActual = 0;
