@@ -15,6 +15,9 @@
     along with Chimp Engine.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef FRAMETIMER_TIMER_H
+#define FRAMETIMER_TIMER_H
+
 #include <chrono>
 
 namespace frametimer
@@ -48,8 +51,9 @@ public:
 template<typename T>
 Timer<T>::Timer(const int numFrames)
 {
-    this->numFrames = 1;
-    setNumFrames(numFrames);
+	frames = nullptr;
+	if(setNumFrames(numFrames) == false)
+		this->numFrames = 1;
     time = steady_clock::now();
 }
 
@@ -111,3 +115,5 @@ const T Timer<T>::getFPSAverage() const
 }
 
 } // namespace frametimer
+
+#endif // FRAMETIMER_TIMER_H
