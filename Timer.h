@@ -65,7 +65,7 @@ bool Timer<T>::setNumFrames(const int numFrames)
         return false;
 
     this->numFrames = numFrames;
-    frames.reset(new T[numFrames]);
+    frames.reset(new T[numFrames]());
     framesIndex = 0;
     frameTimeTotal = 0;
     numFramesActual = 0;
@@ -82,13 +82,16 @@ bool Timer<T>::setTime(const steady_clock::time_point& time)
 template<typename T>
 void Timer<T>::ping()
 {
+    // Because we cycle through the array, it doesn't matter that the first
+    // element we write to is frames[1] (if it exists). It's done this way to
+    // avoid an extra couple arithmetic operations in getFrameTime().
+    framesIndex = (framesIndex + 1) % numFrames;
     steady_clock::time_point timeOld = time;
     time = steady_clock::now();
     T frameTime = std::chrono::duration_cast<std::chrono::duration<T>>(time - timeOld).count();
     frameTimeTotal -= frames[framesIndex];
     frameTimeTotal += frameTime;
     frames[framesIndex] = frameTime;
-    framesIndex = (framesIndex + 1) % numFrames;
     if(numFramesActual < numFrames)
         ++numFramesActual;
 }
